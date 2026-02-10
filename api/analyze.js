@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: '분석할 내용을 입력해주세요.' });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'API 키가 설정되지 않았습니다.' });
 
   const systemPrompt = `당신은 비판적 사고 교육 전문가입니다. 사용자가 입력한 정보나 상황에 대해 비판적 사고의 4대 요소로 분석하여 가이드해주세요.
@@ -53,30 +53,30 @@ export default async function handler(req, res) {
 - 반드시 유효한 JSON만 반환`;
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'claude-sonnet-4-5-20250929',
+        max_tokens: 2000,
+        system: systemPrompt,
         messages: [
-          { role: 'system', content: systemPrompt },
           { role: 'user', content: userInput }
-        ],
-        temperature: 0.7,
-        max_tokens: 2000
+        ]
       })
     });
 
     if (!response.ok) {
-      console.error('OpenAI API error:', await response.text());
+      console.error('Claude API error:', await response.text());
       return res.status(500).json({ error: 'AI 분석 중 오류가 발생했습니다.' });
     }
 
     const data = await response.json();
-    const content = data.choices[0].message.content;
+    const content = data.content[0].text;
 
     let parsed;
     try {
