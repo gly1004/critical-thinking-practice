@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비판적 사고 연습기 - 정보의 바다에서 관점 세우기</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            text-align: center;
+            padding: 50px 20px 30px;
+        }
+        .header-tag {
+            display: inline-block;
+            color: #4ecdc4;
+            font-size: 13px;
+            letter-spacing: 3px;
+            border: 1px solid rgba(78,205,196,0.3);
+            padding: 6px 18px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+        .header h1 .accent { color: #4ecdc4; }
+        .header p {
+            color: #8892a4;
+            font-size: 15px;
+            max-width: 520px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+
+        /* ===== INPUT ===== */
+        .input-section {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 36px;
+            margin-bottom: 36px;
+        }
+        .input-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            font-weight: 700;
+            font-size: 17px;
+        }
+        .input-label .icon {
+            width: 36px; height: 36px;
+            background: rgba(78,205,196,0.15);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+        .input-hint {
+            color: #8892a4;
+            font-size: 13px;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+        textarea {
+            width: 100%;
+            min-height: 130px;
+            background: rgba(0,0,0,0.25);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 18px;
+            color: #fff;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 15px;
+            line-height: 1.7;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+        textarea:focus { outline: none; border-color: #4ecdc4; }
+        textarea::placeholder { color: #556; }
+
+        /* ===== EXAMPLES ===== */
+        .examples { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+        .example-chip {
+            background: rgba(78,205,196,0.1);
+            border: 1px solid rgba(78,205,196,0.25);
+            color: #4ecdc4;
+            padding: 7px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .example-chip:hover {
+            background: rgba(78,205,196,0.2);
+            border-color: #4ecdc4;
+        }
+
+        /* ===== BUTTON ===== */
+        .submit-area { text-align: center; margin-bottom: 40px; }
+        .submit-btn {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            border: none;
+            color: #1a1a2e;
+            padding: 16px 52px;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(78,205,196,0.3);
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(78,205,196,0.45);
+        }
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* ===== LOADING ===== */
+        .loading { display: none; text-align: center; padding: 60px 20px; }
+        .loading.show { display: block; }
+        .spinner {
+            width: 48px; height: 48px;
+            border: 3px solid rgba(78,205,196,0.2);
+            border-top-color: #4ecdc4;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading p { color: #8892a4; font-size: 15px; animation: pulse 1.5s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:.6} 50%{opacity:1} }
+
+        /* ===== RESULT ===== */
+        .result-section { display: none; animation: slideUp 0.6s ease; }
+        .result-section.show { display: block; }
+        @keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+        .input-echo {
+            background: rgba(78,205,196,0.06);
+            border-left: 4px solid #4ecdc4;
+            border-radius: 0 14px 14px 0;
+            padding: 20px 24px;
+            margin-bottom: 32px;
+        }
+        .input-echo-label { color: #4ecdc4; font-size: 12px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
+        .input-echo-text { color: #d0d8e8; font-size: 15px; line-height: 1.7; }
+
+        /* ===== 4 CARDS ===== */
+        .elements-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        .element-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 18px;
+            padding: 28px;
+            transition: all 0.4s;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .element-card.visible { opacity: 1; transform: translateY(0); }
+        .element-card:hover {
+            border-color: rgba(78,205,196,0.3);
+            background: rgba(78,205,196,0.04);
+        }
+        .element-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .element-title { display: flex; align-items: center; gap: 10px; }
+        .element-icon { font-size: 24px; }
+        .element-name { font-weight: 700; font-size: 16px; color: #4ecdc4; }
+        .element-number { color: rgba(78,205,196,0.4); font-size: 12px; font-weight: 700; letter-spacing: 1px; }
+        .element-question {
+            color: #ffc107;
+            font-size: 13px;
+            font-style: italic;
+            margin-bottom: 14px;
+            padding: 8px 12px;
+            background: rgba(255,193,7,0.06);
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+        .element-content { color: #c0c8d8; font-size: 14px; line-height: 1.85; }
+
+        /* ===== PERSPECTIVE ===== */
+        .perspective-box {
+            background: linear-gradient(135deg, rgba(78,205,196,0.15), rgba(68,160,141,0.15));
+            border: 2px solid #4ecdc4;
+            border-radius: 18px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 36px;
+        }
+        .perspective-label { color: #4ecdc4; font-size: 13px; font-weight: 700; letter-spacing: 2px; margin-bottom: 16px; }
+        .perspective-text { font-size: 20px; font-weight: 700; line-height: 1.6; }
+
+        /* ===== ACTIONS ===== */
+        .action-area { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+        .retry-btn {
+            background: transparent;
+            border: 2px solid #4ecdc4;
+            color: #4ecdc4;
+            padding: 14px 36px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .retry-btn:hover { background: #4ecdc4; color: #1a1a2e; }
+        .new-btn {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            border: none;
+            color: #1a1a2e;
+            padding: 14px 36px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .new-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(78,205,196,0.3); }
+
+        /* ===== ERROR ===== */
+        .error-msg {
+            display: none;
+            background: rgba(255,107,107,0.15);
+            border: 1px solid rgba(255,107,107,0.4);
+            border-radius: 12px;
+            padding: 16px 24px;
+            color: #ff6b6b;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .error-msg.show { display: block; }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #445;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 700px) {
+            .header h1 { font-size: 1.6rem; }
+            .elements-grid { grid-template-columns: 1fr; }
+            .input-section { padding: 24px; }
+            .perspective-text { font-size: 17px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-tag">AI 시대 미래 역량 [제 2강]</div>
+        <h1><span class="accent">비판적 사고</span> 연습기</h1>
+        <p>정보나 상황을 입력하면, AI가 비판적 사고의 4대 요소로 분석하여 관점 세우기를 도와드립니다.</p>
+    </div>
+
+    <div class="container">
+
+        <div class="input-section" id="inputSection">
+            <div class="input-label">
+                <div class="icon">💡</div>
+                <span>분석할 정보 또는 상황 입력</span>
+            </div>
+            <div class="input-hint">뉴스 기사, SNS 게시글, 누군가의 주장, 또는 고민되는 상황을 자유롭게 입력하세요.</div>
+            <textarea id="userInput" placeholder="예: &quot;SNS 속 사람들은 모두 행복해 보여. 나만 뒤처지고 불행한 것 같아.&quot;"></textarea>
+            <div class="examples">
+                <div class="example-chip" onclick="setExample(this)">SNS 속 모두가 행복해 보인다</div>
+                <div class="example-chip" onclick="setExample(this)">명문대를 가야 성공한다</div>
+                <div class="example-chip" onclick="setExample(this)">AI가 모든 직업을 대체할 것이다</div>
+                <div class="example-chip" onclick="setExample(this)">코딩 교육은 필수다</div>
+            </div>
+        </div>
+
+        <div class="error-msg" id="errorMsg"></div>
+
+        <div class="submit-area" id="submitArea">
+            <button class="submit-btn" id="submitBtn" onclick="analyze()">비판적 사고로 분석하기</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>AI가 4대 요소로 분석 중입니다...</p>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div class="input-echo">
+                <div class="input-echo-label">INPUT / 정보 유입</div>
+                <div class="input-echo-text" id="echoText"></div>
+            </div>
+            <div class="elements-grid" id="elementsGrid"></div>
+            <div class="perspective-box">
+                <div class="perspective-label">나만의 관점</div>
+                <div class="perspective-text" id="perspectiveText"></div>
+            </div>
+            <div class="action-area">
+                <button class="retry-btn" onclick="retryAnalysis()">같은 주제 다시 분석</button>
+                <button class="new-btn" onclick="newAnalysis()">새로운 주제 분석하기</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        AI 시대 미래 역량 강의 [제2강] 비판적 사고 - 정보의 바다에서 관점 세우기<br>
+        비판적 사고의 4대 요소: 분석(Analysis) · 평가(Evaluation) · 추론(Inference) · 성찰(Reflection)
+    </footer>
+
+    <script>
+        const EXAMPLES = {
+            'SNS 속 모두가 행복해 보인다': 'SNS 속 사람들은 모두 행복해 보여. 나만 뒤처지고 불행한 것 같아.',
+            '명문대를 가야 성공한다': '명문대에 가지 못하면 미래는 실패한 것이나 다름없다.',
+            'AI가 모든 직업을 대체할 것이다': 'AI가 발전하면 대부분의 직업이 사라지고, 인간은 할 일이 없어질 것이다.',
+            '코딩 교육은 필수다': '앞으로의 시대에는 코딩을 배우지 않으면 뒤처질 수밖에 없다.'
+        };
+
+        let lastInput = '';
+
+        function setExample(chip) {
+            document.getElementById('userInput').value = EXAMPLES[chip.textContent] || chip.textContent;
+        }
+
+        async function analyze() {
+            const input = document.getElementById('userInput').value.trim();
+            if (!input) { showError('분석할 정보 또는 상황을 입력해주세요.'); return; }
+
+            lastInput = input;
+            hideError();
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('inputSection').style.display = 'none';
+            document.getElementById('submitArea').style.display = 'none';
+            document.getElementById('resultSection').classList.remove('show');
+            document.getElementById('loading').classList.add('show');
+
+            try {
+                const res = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userInput: input })
+                });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err.error || '서버 오류가 발생했습니다.');
+                }
+                const data = await res.json();
+                renderResult(input, data);
+            } catch (err) {
+                showError(err.message || 'AI 분석 중 오류가 발생했습니다.');
+                document.getElementById('inputSection').style.display = '';
+                document.getElementById('submitArea').style.display = '';
+            } finally {
+                document.getElementById('loading').classList.remove('show');
+                document.getElementById('submitBtn').disabled = false;
+            }
+        }
+
+        function renderResult(input, data) {
+            document.getElementById('echoText').textContent = input;
+
+            const grid = document.getElementById('elementsGrid');
+            grid.innerHTML = '';
+
+            const elements = [
+                { key: 'analysis',   num: 'ELEMENT 01' },
+                { key: 'evaluation', num: 'ELEMENT 02' },
+                { key: 'inference',  num: 'ELEMENT 03' },
+                { key: 'reflection', num: 'ELEMENT 04' }
+            ];
+
+            elements.forEach((el, i) => {
+                const d = data[el.key];
+                if (!d) return;
+                const card = document.createElement('div');
+                card.className = 'element-card';
+                card.innerHTML = `
+                    <div class="element-header">
+                        <div class="element-title">
+                            <span class="element-icon">${d.icon}</span>
+                            <span class="element-name">${d.title}</span>
+                        </div>
+                        <span class="element-number">${el.num}</span>
+                    </div>
+                    <div class="element-question">"${d.question}"</div>
+                    <div class="element-content">${d.content}</div>`;
+                grid.appendChild(card);
+                setTimeout(() => card.classList.add('visible'), 150 * i);
+            });
+
+            document.getElementById('perspectiveText').textContent = data.myPerspective || '';
+            document.getElementById('resultSection').classList.add('show');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function retryAnalysis() {
+            document.getElementById('userInput').value = lastInput;
+            document.getElementById('resultSection').classList.remove('show');
+            document.getElementById('inputSection').style.display = '';
+            document.getElementById('submitArea').style.display = '';
+            analyze();
+        }
+
+        function newAnalysis() {
+            document.getElementById('userInput').value = '';
+            document.getElementById('resultSection').classList.remove('show');
+            document.getElementById('inputSection').style.display = '';
+            document.getElementById('submitArea').style.display = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.classList.add('show');
+        }
+        function hideError() { document.getElementById('errorMsg').classList.remove('show'); }
+
+        document.getElementById('userInput').addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); analyze(); }
+        });
+    </script>
+</body>
+</html>
